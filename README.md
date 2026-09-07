@@ -30,4 +30,12 @@ uvicorn app.main:app --host 127.0.0.1 --port 8000
 - [`lecture/PAYLOADS.md`](lecture/PAYLOADS.md) — проверенные curl-эксплойты с пояснениями
 - [`lecture/LECTURE_OUTLINE.md`](lecture/LECTURE_OUTLINE.md) — структура лекции «Как легко взломать приложение / найти дыры с помощью ИИ»
 - [`lecture/demo_ai_fuzz.py`](lecture/demo_ai_fuzz.py) — живой фаззер (гоняет вредоносные значения, ловит 500-ки)
+- [`lecture/LECTURE_FEATURES.md`](lecture/LECTURE_FEATURES.md) — детальная проработка п.1,3,4,5,6,7,8,9,10
+- [`lecture/diagram_attack_chain.md`](lecture/diagram_attack_chain.md) — цепочка SQLi → RCE (Mermaid)
+- [`lecture/devsecops_pipeline.md`](lecture/devsecops_pipeline.md) — схема пайплайна с ролью ИИ
+- [`lecture/supply_chain_demo.md`](lecture/supply_chain_demo.md) — как pip-пакет может навредить
 - [`screenshots/`](screenshots/) — скриншоты для слайдов: Swagger, SQL-инъекция, фаззер, 500
+
+### Исправленная ветка (п.5 «фикс за 1 минуту»)
+
+Ветка [`fix/sql-injection`](https://github.com/ozyab09/fast-api-audit/tree/fix/sql-injection) — SQL-инъекция (CWE-89) закрыта параметризованным запросом. Фаззер подтверждает: `sql OR 1=1` / `UNION` / `DELETE` больше не дают 500 (вернутся 200), а отдельная дыра `int overflow` (CWE-248) остаётся видна.
