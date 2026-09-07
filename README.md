@@ -36,6 +36,6 @@ uvicorn app.main:app --host 127.0.0.1 --port 8000
 - [`lecture/supply_chain_demo.md`](lecture/supply_chain_demo.md) — как pip-пакет может навредить
 - [`screenshots/`](screenshots/) — скриншоты для слайдов: Swagger, SQL-инъекция, фаззер, 500
 
-### Исправленная ветка (п.5 «фикс за 1 минуту»)
+### Исправление SQL-инъекции (п.5 «фикс за 1 минуту»)
 
-Ветка [`fix/sql-injection`](https://github.com/ozyab09/fast-api-audit/tree/fix/sql-injection) — SQL-инъекция (CWE-89) закрыта параметризованным запросом. Фаззер подтверждает: `sql OR 1=1` / `UNION` / `DELETE` больше не дают 500 (вернутся 200), а отдельная дыра `int overflow` (CWE-248) остаётся видна.
+SQL-инъекция (CWE-89) **закрыта** параметризованным запросом — мерж PR #1 (`2530064`), фикс уже в `main`. Фаззер подтверждает: `sql OR 1=1` / `UNION` / `DELETE` больше не дают 500 (возвращают 200), а отдельная дыра `int overflow` (CWE-248) остаётся видна.
