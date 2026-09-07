@@ -1,4 +1,7 @@
-"""Работа с SQLite: схема, CRUD, поиск."""
+"""Работа с SQLite: схема, CRUD, поиск (ИСПРАВЛЕННАЯ — ветка fix/sql-injection).
+
+Параметризованные запросы — SQL-инъекция закрыта (CWE-89).
+"""
 import sqlite3
 from typing import Optional
 
@@ -12,7 +15,6 @@ def get_db() -> sqlite3.Connection:
 
 
 def init_db() -> None:
-    """Создаёт таблицу items при первом запуске."""
     with get_db() as conn:
         conn.execute(
             """
@@ -25,7 +27,6 @@ def init_db() -> None:
             )
             """
         )
-        # Семплируем пару строк для демо
         cur = conn.execute("SELECT COUNT(*) AS c FROM items")
         if cur.fetchone()["c"] == 0:
             conn.execute(
@@ -46,7 +47,6 @@ def row_to_dict(row: sqlite3.Row):
     return d
 
 
-# ---------- CRUD (параметризованные запросы) ----------
 def list_items(limit: int, offset: int):
     with get_db() as conn:
         cur = conn.execute(
@@ -87,15 +87,16 @@ def delete_item(item_id: int) -> bool:
         return cur.rowcount > 0
 
 
-# ---------- Поиск ----------
+# ---------- Поиск (ИСПРАВЛЕНО: параметризованный запрос) ----------
 def search_items(q: str):
     """Поиск по имени/описанию.
 
-    ВНИМАНИЕ: запрос собран через f-string — см. AUDIT.md.
+    FIX (CWE-89): параметризованный запрос — SQL не зависит от пользовательского ввода.
     """
-    conn = get_db()
-    sql = f"SELECT * FROM items WHERE name LIKE '%{q}%' OR description LIKE '%{q}%'"
-    cur = conn.execute(sql)
-    rows = [row_to_dict(r) for r in cur.fetchall()]
-    conn.close()
-    return rows
+    like = f"%{q}%"
+    with get_db() as conn:
+        cur = conn.execute(
+            "SELECT * FROM items WHERE name LIKE ? OR description LIKE ?",
+            (like, like),
+        )
+        return [row_to_dict(r) for r in cur.fetchall()]
